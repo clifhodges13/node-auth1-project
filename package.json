@@ -14,7 +14,8 @@
     "node",
     "express",
     "hashing",
-    "bcryptjs"
+    "bcryptjs",
+    "knex"
   ],
   "author": "Clifton Hodges",
   "license": "ISC",

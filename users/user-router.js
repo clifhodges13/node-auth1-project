@@ -5,6 +5,7 @@ const restricted = require("../middleware/restricted")
 
 const router = express.Router()
 
+// Register a user
 router.post("/register", async (req, res, next) => {
   try {
     const saved = await usersModel.add(req.body)
@@ -15,6 +16,7 @@ router.post("/register", async (req, res, next) => {
   }
 })
 
+// Login a user
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body
@@ -43,6 +45,7 @@ router.post("/login", async (req, res, next) => {
   }
 })
 
+// GET all users
 router.get("/users", restricted(), async (req, res, next) => {
   try {
     const users = await usersModel.find()
@@ -53,6 +56,23 @@ router.get("/users", restricted(), async (req, res, next) => {
   }
 })
 
+// GET a user by id
+router.get("/users/:id", restricted(), async (req, res, next) => {
+  try {
+    const user = await usersModel.findById(req.params.id)
+
+    if (!user) {
+      res.status(404).json({ message: "That user does not exist." })
+    } else {
+      res.status(200).json(user)
+    }
+    
+  } catch(err) {
+    next(err)
+  }
+})
+
+// Logout a user
 router.get("/logout", restricted(), (req, res, next) => {
   req.session.destroy(err => {
     if(err) {
@@ -62,5 +82,6 @@ router.get("/logout", restricted(), (req, res, next) => {
     }
   })
 })
+
 
 module.exports = router

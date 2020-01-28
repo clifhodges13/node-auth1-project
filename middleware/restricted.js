@@ -1,34 +1,9 @@
-const bcrypt = require("bcryptjs")
-const db = require("../users/user-model")
-
-function restricted() {
-  const authError = {
-    message: "Invalid Credentials"
-  }
-
+module.exports = () => {
   return async (req, res, next) => {
-    try {
-      const { username, password } = req.headers
-      if(!username || !password) {
-        return res.status(401).json(authError)
-      }
-
-      const user = await db.findBy({ username }).first()
-      if(!user) {
-        return res.status(401).json(authError)
-      }
-
-      const passwordValid = await bcrypt.compare(password, user.password)
-      if(!passwordValid) {
-        return res.status(401).json(authError)
-      }
-
-      next()
-
-    } catch(err) {
-      next(err)
+    if(!req.session || !req.session.user) {
+      return res.status(401).json({ message: "Invalid Credentials" })
     }
+
+    next()
   }
 }
-
-module.exports = restricted
